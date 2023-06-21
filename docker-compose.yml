@@ -1,0 +1,34 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    # image: git.mf.io/mkolotovich/phones-fu:latest
+    container_name: phones-app
+    environment:
+      # Почта отправителя
+      - SMTP_USER=${SMTP_USER}
+      # Пароль почты
+      - SMTP_PASS=${SMTP_PASS}
+      # Домен на котором хоститься приложение
+      - APP_URL=${APP_URL}
+      # URI базы данных
+      - MONGODB_URI=${MONGODB_URI}
+      # Ключ шифрования
+      - ENC_KEY=${ENC_KEY}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    volumes:
+      - data:/app/data
+  mongo:
+    image: mongo:6.0
+    container_name: mongo_dev
+    restart: always
+    volumes:
+      - ./phones.json:/data/db/phones.json
+volumes:
+  data:
